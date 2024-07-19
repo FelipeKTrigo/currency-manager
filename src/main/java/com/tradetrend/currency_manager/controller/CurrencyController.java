@@ -2,6 +2,7 @@ package com.tradetrend.currency_manager.controller;
 
 import com.tradetrend.currency_manager.dtos.CurrenciesDTO;
 import com.tradetrend.currency_manager.service.CurrencyService;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ public class CurrencyController {
     private CurrencyService service;
 
     @GetMapping("/currencies")
-    public ResponseEntity getCurrencies(@RequestParam String originCurrency, @RequestParam String destinyCurrency){
+    public ResponseEntity getCurrencies(@RequestParam @NotNull(message = "originCurrency can't be null") String originCurrency,
+                                        @RequestParam @NotNull(message = "destinyCurrency can't be null") String destinyCurrency){
         log.info("Request:{},{}",originCurrency,destinyCurrency);
         Object response = service.getCurrencies(originCurrency,destinyCurrency);
         log.info("Response:{}",response);
