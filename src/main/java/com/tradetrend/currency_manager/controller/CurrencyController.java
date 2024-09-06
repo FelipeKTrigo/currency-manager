@@ -1,5 +1,6 @@
 package com.tradetrend.currency_manager.controller;
 
+import com.google.gson.Gson;
 import com.tradetrend.currency_manager.dtos.CurrenciesDTO;
 import com.tradetrend.currency_manager.service.CurrencyService;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/v1")
 public class CurrencyController {
 
@@ -35,7 +36,7 @@ public class CurrencyController {
     public ResponseEntity<List<CurrenciesDTO>> listCurrenciesAvailable(){
         log.info("Request list active currencies");
         List<CurrenciesDTO> list = service.listAllCurrenciesAvaliable();
-        log.info("Response:{}",list);
+        log.info("Response:{}",new Gson().toJson(list));
         return ResponseEntity.ok(list);
     }
 }

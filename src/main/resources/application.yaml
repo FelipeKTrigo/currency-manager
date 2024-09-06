@@ -20,3 +20,10 @@ server:
 endpoints:
   baseCurrency: https://economia.awesomeapi.com.br
   currencies: /last/
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger
+  operationsSorter: method
