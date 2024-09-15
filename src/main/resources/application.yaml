@@ -24,3 +24,10 @@ endpoints:
 parameters:
   validProposalRange: 30
   exchangeProfitPercentage: 15
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger
+  operationsSorter: method
