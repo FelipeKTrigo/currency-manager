@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="tb_currencies")
+@Table(name="currencies")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter

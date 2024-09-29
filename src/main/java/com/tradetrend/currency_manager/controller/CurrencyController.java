@@ -3,6 +3,7 @@ package com.tradetrend.currency_manager.controller;
 import com.google.gson.Gson;
 import com.tradetrend.currency_manager.constraints.SimulationConstraints;
 import com.tradetrend.currency_manager.dtos.CurrenciesDTO;
+import com.tradetrend.currency_manager.dtos.CurrencyGetResponse;
 import com.tradetrend.currency_manager.dtos.SimulationRequestDTO;
 import com.tradetrend.currency_manager.dtos.exception.SimulationConstraintException;
 import com.tradetrend.currency_manager.model.Simulation;
@@ -13,12 +14,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1")
@@ -31,21 +34,18 @@ public class CurrencyController {
     private SimulationsService simulationService;
     @Autowired
     private ApplicationProperties properties;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @PostMapping("/simulations")
     public ResponseEntity<Simulation> simulate(@RequestBody @Valid @NotNull(message = "request body can't be null") SimulationRequestDTO request) throws SimulationConstraintException {
         log.info("simulation request: {}",request.toString());
-        SimulationConstraints.validateRequestSimulationEntry(request,properties);
-        return ResponseEntity.ok(simulationService.generateSimulationAndSave(request,properties));
-    }
-
-    @GetMapping("/currencies")
-    public ResponseEntity getCurrencies(@RequestParam @NotNull(message = "originCurrency can't be null") String originCurrency,
-                                        @RequestParam @NotNull(message = "destinyCurrency can't be null") String destinyCurrency) {
-        log.info("Request: {},{}", originCurrency, destinyCurrency);
-        Object response = service.getCurrencies(originCurrency, destinyCurrency);
-        log.info("Response: {}", new Gson().toJson(response));
-        return ResponseEntity.ok(response);
+        SimulationConstraints.validateRequestSimulationEntry(request);
+        Map<String, CurrencyGetResponse> response = service.getCurrencies(request.getOriginCurrency(), request.getDestinyCurrency());
+        CurrencyGetResponse currencyObject = response.getOrDefault(
+                (request.getOriginCurrency()+request.getDestinyCurrency()).toUpperCase(),
+                response.get(response.keySet().iterator().next()));
+        return ResponseEntity.ok(simulationService.generateSimulationAndSave(request,currencyObject,properties));
     }
 
     @GetMapping("/currencies/list")

@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationProperties {
-    @Value("${parameters.validProposalRange}")
-    private Integer validProposalTime;
+
     @Value("${parameters.exchangeProfitPercentage}")
     private Integer profitPercentage;
 }
